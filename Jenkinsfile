@@ -1,10 +1,16 @@
 node {
- stage('clone') {
-    git 'https://github.com/juppe31/jenkins.git'
-  
-}  
-  stage('build and run') {
-   sh label: '', script: '''javac Main.java
-java Main'''
-}  
+def app
+stage ('clone') {
+	checkout scm
 }
+stage ('Build image')	{
+	app=docker.build ("xavki/nginx")
+}
+stage('Run image'){
+	docker.image('xavki/nginx').withRun('-p 80:80') { c ->
+
+	sh 'docker ps'
+	sh 'curl localhost'
+}
+}
+	}
